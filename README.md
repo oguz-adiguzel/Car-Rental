@@ -36,7 +36,7 @@ To get the project up and running
 <li>ReactJS
 
 
-## Contact Information
+## Contact
 
 Oğuz Adıgüzel [Linkedin](https://www.linkedin.com/in/oğuz-adıgüzel-2672a8242). - oguz_adiguzel@outlook.com
 
