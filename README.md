@@ -1,4 +1,4 @@
-# About The Project
+# About The Project hgjhgjhg
 
 A car rental site using ReactJS and Bootstrap. For example, Avis.com.tr works on the same system as Garenta.com.tr applications. A price is determined in the system according to the selected purchase office, return office, purchase date and return date. The determined price is reflected to the end user according to the vehicle features and class. A new page opens with user information and credit card information depending on which car the user has chosen. The information entered by the user is stored to be sent to the necessary units.
 React, Css and Bootstrap are used in the project. Vehicle information is kept as an array in 'carSelectionPage.js'. The prices shown to the user are formatted with the 'react-intl' library.
