@@ -1,5 +1,4 @@
 import Car from '../components/car';
-import { useForm } from '../context/formContext';
 import logo from '../img/logo.gif';
 import chip from '../img/chip.svg';
 import mastecard from '../img/mastercard.svg';
@@ -9,7 +8,6 @@ import { useCarId } from '../context/carSelectedID';
 import { useEffect, useState } from 'react';
 import { FormattedNumber } from "react-intl";
 import { useNavigate } from 'react-router-dom';
-
 
 function CarSelection() {
     const carList = [
@@ -150,6 +148,11 @@ function CarSelection() {
         }
     ]
 
+    const dailyPrice = 475;
+    let userInfo = JSON.parse(sessionStorage.getItem('userInfo'));
+    const navigate = useNavigate();
+    const { carId, setCarId } = useCarId();
+
     const [formValue, setFromValue] = useState({
         name: "",
         surname: "",
@@ -159,6 +162,9 @@ function CarSelection() {
         phone: "",
         adress: ""
     });
+
+    const [day, setDay] = useState()
+    const { name, surname, tc, email, birthDay, phone, adress } = formValue;
 
     const handleChange = (event) => {
         const { name, value } = event.target;
@@ -170,50 +176,25 @@ function CarSelection() {
         });
     };
 
-    const { name, surname, tc, email, birthDay, phone, adress } = formValue;
-
     useEffect(() => {
-        dayCalculation()
+        if (userInfo) {
+            dayCalculation();
+        } else {
+            navigate('/')
+        }
     }, []);
 
-    const navigate = useNavigate()
-
-    const dailyPrice = 475;
-    const [day, setDay] = useState()
     const dayCalculation = () => {
-        let firstTime = new Date(form.openDate).getTime()
-        let lastTime = new Date(form.closeDate).getTime()
+        let firstTime = new Date(userInfo.openDate).getTime()
+        let lastTime = new Date(userInfo.closeDate).getTime()
         let differanceTime = lastTime - firstTime;
         let differanceDay = Math.ceil(differanceTime / (1000 * 3600 * 24));
+        console.warn('differanceDayy', differanceDay);
         if (differanceDay === 0) {
             differanceDay = 1
         }
         setDay(differanceDay)
     }
-
-    const { form } = useForm();
-    const { carId, setCarId } = useCarId();
-
-    if (form.openLocation === '1') {
-        form.openLocation = 'İstanbul Yeni Havalimanı'
-    } else if (form.openLocation === '2') {
-        form.openLocation = 'İstanbul Atatürk Havalimanı'
-    } else if (form.openLocation === '3') {
-        form.openLocation = 'İstanbul Sabiha Gökçen Havalimanı'
-    }
-
-    if (form.closeLocation === '1') {
-        form.closeLocation = 'İstanbul Yeni Havalimanı'
-    } else if (form.closeLocation === '2') {
-        form.closeLocation = 'İstanbul Atatürk Havalimanı'
-    } else if (form.closeLocation === '3') {
-        form.closeLocation = 'İstanbul Sabiha Gökçen Havalimanı'
-    }
-
-
-    let selectedCar = carList.filter((item, index) => (
-        carId === item.id
-    ))
 
     const close = () => {
         setCarId();
@@ -222,8 +203,30 @@ function CarSelection() {
     const completeReservation = () => {
         console.log(formValue);
         setCarId();
-        alert('Rezervasyon Tamamlandı')
+        alert('Rezervasyon Tamamlandı');
         navigate('/');
+    }
+
+    let selectedCar = carList.filter((item) => (
+        carId === item.id
+    ));
+
+    if (userInfo) {
+        if (userInfo.openLocation === '1') {
+            userInfo.openLocation = 'İstanbul Yeni Havalimanı'
+        } else if (userInfo.openLocation === '2') {
+            userInfo.openLocation = 'İstanbul Atatürk Havalimanı'
+        } else if (userInfo.openLocation === '3') {
+            userInfo.openLocation = 'İstanbul Sabiha Gökçen Havalimanı'
+        }
+
+        if (userInfo.closeLocation === '1') {
+            userInfo.closeLocation = 'İstanbul Yeni Havalimanı'
+        } else if (userInfo.closeLocation === '2') {
+            userInfo.closeLocation = 'İstanbul Atatürk Havalimanı'
+        } else if (userInfo.closeLocation === '3') {
+            userInfo.closeLocation = 'İstanbul Sabiha Gökçen Havalimanı'
+        }
     }
 
     return (<>
@@ -239,16 +242,16 @@ function CarSelection() {
                         <div className='col-6'>
                             <p className='text-warning fs-5 text-center mt-3'>Lokasyon ve Tarih</p>
                             <div>
-                                <span className='text-danger ms-3 '>Alış Ofisiniz : </span><span className='fw-bold'>{form.openLocation}</span>
+                                <span className='text-danger ms-3 '>Alış Ofisiniz : </span><span className='fw-bold'>{userInfo.openLocation}</span>
                             </div>
                             <div className='mt-2'>
-                                <span className='text-danger ms-3 '>İade Ofisiniz : </span><span className='fw-bold'>{form.closeLocation}</span>
+                                <span className='text-danger ms-3 '>İade Ofisiniz : </span><span className='fw-bold'>{userInfo.closeLocation}</span>
                             </div>
                             <div className='mt-4'>
-                                <span className='text-danger ms-3'>Alış Tarihiniz : </span><span className='fw-bold'>{Moment(form.openDate).format('DD.MM.YYYY')}</span>
+                                <span className='text-danger ms-3'>Alış Tarihiniz : </span><span className='fw-bold'>{Moment(userInfo.openDate).format('DD.MM.YYYY')}</span>
                             </div>
                             <div className='mt-2'>
-                                <span className='text-danger ms-3'>İade Tarihiniz : </span><span className='fw-bold '>{Moment(form.closeDate).format('DD.MM.YYYY')}</span>
+                                <span className='text-danger ms-3'>İade Tarihiniz : </span><span className='fw-bold '>{Moment(userInfo.closeDate).format('DD.MM.YYYY')}</span>
                             </div>
                         </div>
                         <div className='col-6 popup-img-container'>
@@ -256,7 +259,7 @@ function CarSelection() {
                                 selectedCar.map((item, index) => (
                                     <div key={index} className='container-fluid d-flex flex-column align-items-center'>
                                         <p className='text-warning fs-5 text-center mt-3'>{item.model}</p>
-                                        <img className='w-100' src={item.imgUrl} />
+                                        <img alt='car' className='w-100' src={item.imgUrl} />
                                         <div>
                                             <span className='fw-bold'>{item.fuel},</span><span>{item.gear},</span><span className='text-capitalize fw-bold'>{item.clas}</span>
                                         </div>
@@ -376,20 +379,20 @@ function CarSelection() {
             <div className='d-flex justify-content-evenly w-50 align-items-center header-info-container'>
                 <div>
                     <div>
-                        <span className='text-success header-info'>Alış Ofisiniz : </span><span className='fw-bold header-info'>{form.openLocation}</span>
+                        <span className='text-success header-info'>Alış Ofisiniz : </span><span className='fw-bold header-info'>{userInfo ? userInfo.openLocation : ''}</span>
                     </div>
                     <div>
-                        <span className='text-success header-info'>Alış Tarihiniz : </span><span className='fw-bold header-info'>{Moment(form.openDate).format('DD.MM.YYYY')}</span>
+                        <span className='text-success header-info'>Alış Tarihiniz : </span><span className='fw-bold header-info'>{Moment(userInfo ? userInfo.openDate : '').format('DD.MM.YYYY')}</span>
                     </div>
 
                 </div>
 
                 <div>
                     <div>
-                        <span className='text-danger header-info'>İade Ofisiniz : </span><span className='fw-bold header-info'>{form.closeLocation}</span>
+                        <span className='text-danger header-info'>İade Ofisiniz : </span><span className='fw-bold header-info'>{userInfo ? userInfo.closeLocation : ''}</span>
                     </div>
                     <div>
-                        <span className='text-danger header-info'>İade Tarihiniz : </span><span className='fw-bold header-info'>{Moment(form.closeDate).format('DD.MM.YYYY')}</span>
+                        <span className='text-danger header-info'>İade Tarihiniz : </span><span className='fw-bold header-info'>{Moment(userInfo ? userInfo.closeDate : '').format('DD.MM.YYYY')}</span>
                     </div>
                 </div>
             </div>

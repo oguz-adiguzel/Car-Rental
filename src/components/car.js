@@ -1,5 +1,4 @@
-import { useContext, useEffect, useState } from 'react';
-import { useForm } from '../context/formContext';
+import {  useEffect, useState } from 'react';
 import { FormattedNumber } from "react-intl";
 import { useCarId } from '../context/carSelectedID';
 
@@ -10,22 +9,19 @@ function Car({ cars }) {
         dayCalculation()
     }, []);
 
-    const { form } = useForm();
-
-    const {carId,setCarId} = useCarId();
-
+    let userInfo = JSON.parse(sessionStorage.getItem('userInfo'));
+    const {setCarId} = useCarId();
     const [day, setDay] = useState()
-
     const dailyPrice = 475;
 
-    const addCar = (ix) => {
-        setCarId(ix)
-        console.log(ix);
+    const addCar = (id) => {
+        setCarId(id)
+        console.log(id);
     }
 
     const dayCalculation = () => {
-        let firstTime = new Date(form.openDate).getTime()
-        let lastTime = new Date(form.closeDate).getTime()
+        let firstTime = new Date(userInfo ? userInfo.openDate : '').getTime()
+        let lastTime = new Date(userInfo ? userInfo.closeDate : '').getTime()
         let differanceTime = lastTime - firstTime;
         let differanceDay = Math.ceil(differanceTime / (1000 * 3600 * 24));
         if (differanceDay === 0) {
@@ -53,7 +49,7 @@ function Car({ cars }) {
             </div>
             <div className="row mt-4">
                 <div className="col-12 d-flex justify-content-center">
-                    <img className="car-card-img" src={imgUrl} />
+                    <img alt='car' className="car-card-img" src={imgUrl} />
                 </div>
             </div>
             <div className="row mt-4">

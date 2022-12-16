@@ -1,7 +1,6 @@
 import logo from '../img/logo.gif';
 function Header() {
     return (<>
-
         <nav className=' mx-auto py-4'>
             <img className='logo' src={logo} />
             <ul className='nav-ul pt-2'>

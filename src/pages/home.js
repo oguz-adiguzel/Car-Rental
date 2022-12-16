@@ -9,20 +9,16 @@ import google from '../img/google.svg';
 import facebook from '../img/facebook.svg';
 import { Carousel } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
-import { useForm } from "../context/formContext";
 import validation from "../validations";
 import Moment from 'moment';
 
 function Home() {
-
     const navigate = useNavigate();
-
-    const { form, setForm } = useForm()
+    const [popup, setPopup] = useState(false)
 
     useEffect(() => {
-        setForm([]);
+        sessionStorage.clear()
     }, []);
-
 
     const { handleSubmit, handleChange, values, errors, touched, handleBlur } = useFormik({
         initialValues: {
@@ -32,13 +28,13 @@ function Home() {
             closeDate: '',
         },
         onSubmit: (values) => {
-            setForm(values)
-            // console.log(values);
+            sessionStorage.setItem('userInfo', JSON.stringify(values));
+            setPopup(!popup);
+            console.log(values);
 
             setTimeout(() => {
                 navigate('/carSelection')
             }, 1500);
-
         },
         validationSchema: validation
     })
@@ -48,9 +44,9 @@ function Home() {
 
     let closeMinDate = new Date(values.openDate);
     let newCloseMinDate = Moment(closeMinDate).format('YYYY-MM-DD');
-   
+
     return (<>
-        {form.openLocation && <div className="container-fluid popup-container">
+        {popup && <div className="container-fluid popup-container">
             <div className="popup">
                 <div className="lds-spinner"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
                 <p className="fw-bold mt-3 fs-5">İşleminiz Yapılıyor</p>
