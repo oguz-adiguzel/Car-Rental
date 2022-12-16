@@ -30,7 +30,6 @@ function Home() {
         onSubmit: (values) => {
             sessionStorage.setItem('userInfo', JSON.stringify(values));
             setPopup(!popup);
-            console.log(values);
 
             setTimeout(() => {
                 navigate('/carSelection')
